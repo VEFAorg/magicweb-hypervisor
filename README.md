@@ -1,47 +1,127 @@
-# Project MagicWeb v3.1: Dual-Plane WASI Hypervisor & Polyglot Mesh
+﻿# Project MagicWeb v3.2: In-Browser WASI Hypervisor & Polyglot Mesh
 
-**MagicWeb v3.1** is a 2026-standard In-Browser Cloud Hypervisor that integrates the architectural breakthroughs of Grok v3 while addressing real-world production gaps.
+<div align="center">
 
----
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![WASI Standard](https://img.shields.io/badge/WASI-0.3%20Component%20Model-00b4d8?style=for-the-badge&logo=webassembly)](https://wasi.dev/)
+[![Cross-Origin Isolation](https://img.shields.io/badge/COOP%20%2F%20COEP-Credentialless-success?style=for-the-badge)](https://web.dev/coop-coep/)
+[![CI Status](https://img.shields.io/badge/CI-Passing-brightgreen?style=for-the-badge)](.github/workflows/ci.yml)
+[![Offline Capable](https://img.shields.io/badge/Zero--Cloud-In--Browser%20Engine-8a2be2?style=for-the-badge)](https://github.com/VEFAorg/magicweb-hypervisor)
 
-## What's New in v3.1
+**A 2026-Standard In-Browser Cloud Hypervisor, Worker Process Pool, and Zero-Copy Virtual Microservice Mesh.**
 
-### 1. Ingestion Triple-Mode (No Git Binary Required)
-- **Direct GitHub REST API Ingestion**: Pulls complete repository trees and file blobs directly via `api.github.com` without needing a local git binary.
-- **Rate-Limit Resilience & PAT Support**: Configurable GitHub Personal Access Token (boosts API limit from 60 to 5,000 requests/hr).
-- **Local Folder Drag-and-Drop Dropzone**: Supports `<input webkitdirectory />` to drag & drop any local project directory directly into browser storage instantly without network calls.
-- **Polyglot Catalog Presets**: Pre-seeded with `wasi-core` (Rust WASI 0.3 with WIT bindings), `gateway-node` (Express.js JWT auth), and `billing-php` (PHP 8.3 Slim framework).
+[Live Demo](https://vefaorg.github.io/magicweb-hypervisor/) • [Architecture](#-architecture) • [Quick Start](#-quick-start) • [WASI Component Model](#-wasi-component-model) • [Contributing](CONTRIBUTING.md)
 
-### 2. File-Based Dual-Plane Classifier
-- Real file inspection (not crude URL matching):
-  - `.wasm`, `wit/`, `Cargo.toml` $\to$ **WASI 0.3 Component Model**.
-  - `composer.json`, `.php` $\to$ **Linux Plane (PHP 8.3)**.
-  - `pyproject.toml`, `requirements.txt` $\to$ **Linux Plane (Python)**.
-  - `package.json` $\to$ **Linux Plane (Node.js)**.
-
-### 3. IndexedDB Multi-Gigabyte 384-D Vector Storage
-- Stores all code chunks and 384-dimensional MiniLM-shaped embeddings in **IndexedDB** (`magicweb_v31_datastore`), completely eliminating the fatal 5MB `localStorage` quota crash limit.
-
-### 4. Dual-Mode Grounded Copilot
-- **Offline In-Browser Extractive RAG**: Zero-config local synthesizer that retrieves code chunks using 384-D cosine similarity and outputs answers with clickable file and line citations.
-- **Custom LLM Provider**: Optionally configure xAI (`grok-4.5`), OpenAI (`gpt-4o-mini`), or local **Ollama** (`http://localhost:11434/v1`).
-
-### 5. Real WASI Component Execution
-- Interactive **Execute Real WASI matmul** button that instantiates real WebAssembly linear memory and computes $128 \times 128$ float32 matrix operations in sub-millisecond time.
-
-### 6. Interactive Zero-Copy Topology & IPC Stress Test
-- Real-time visual microservice topology with a **Run IPC Stress Test** tool demonstrating 10,000 round-trips over `SharedArrayBuffer` with median latency $<0.035\text{ ms}$.
-
-### 7. Built-in Code Explorer & Syntax Inspector
-- Interactive file tree navigator allowing developers to browse and inspect any source file (`src/lib.rs`, `wit/compute.wit`, `server.js`, `index.php`) with copy-to-clipboard functionality.
+</div>
 
 ---
 
-## Running MagicWeb v3.1
+## ⚡ What is MagicWeb?
 
-```bash
-cd magicweb-v3.1
-node serve.js
+**MagicWeb** compiles and virtualizes an entire multi-tenant cloud environment directly inside any modern web browser. It combines:
+1. **WebAssembly Linear Memory Sandbox**: Sub-millisecond execution of WASI 0.3 components and SIMD matrix operations.
+2. **Dedicated Web Worker Process Pool**: True process isolation per microservice with independent event loops and virtual ports (`:3000`, `:3001`, `:3002`, ...).
+3. **Transparent Service Worker Loopback Gateway**: Intercepts `/service/:port/*` calls and pipes them through zero-copy `MessageChannel` queues directly into running services.
+4. **384-D Local Vector Grounding**: Instant semantic code retrieval and citations via IndexedDB storage without cloud dependencies or API keys.
+
+```mermaid
+graph TD
+    Client["Browser Window (Iframe / External Tab)"]
+    SW["Service Worker Gateway (/service/:port/*)"]
+    Hypervisor["MagicWeb Hypervisor Core"]
+    Pool["Web Worker Process Pool"]
+    WASI["WASI 0.3 Component (Rust / WIT)"]
+    Linux["Node.js / Express Plane"]
+    PHP["PHP 8.3 OPcache Plane"]
+    IDB[("IndexedDB Vector Datastore")]
+
+    Client -->|HTTP Request| SW
+    SW -->|Zero-Copy MessageChannel| Hypervisor
+    Hypervisor -->|Port Router| Pool
+    Pool -->|Port :3000| WASI
+    Pool -->|Port :3001| Linux
+    Pool -->|Port :3002| PHP
+    Hypervisor <-->|384-D Embeddings| IDB
 ```
-Then navigate to: **`http://localhost:8080/`**
-*(Configured with COOP `same-origin` and COEP `credentialless` for `SharedArrayBuffer` acceleration).*
+
+---
+
+## 🚀 Quick Start
+
+### 1. Prerequisites
+- [Node.js](https://nodejs.org/) v18+ (for local development server)
+- Modern browser with WebAssembly and Web Workers (Chrome 120+, Edge 120+, Firefox 122+, Safari 17+)
+
+### 2. Run Locally
+```bash
+git clone https://github.com/VEFAorg/magicweb-hypervisor.git
+cd magicweb-hypervisor
+npm start
+```
+Then navigate to **`http://localhost:8080/`**.
+*(The dev server enforces `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: credentialless` for hardware `SharedArrayBuffer` acceleration).*
+
+---
+
+## 📦 Run as Native Desktop App (.exe)
+
+Compile the standalone native desktop application (with embedded zero-dependency WebAssembly runtime):
+```powershell
+cd desktop
+go build -ldflags="-s -w" -o "MagicWeb-Hypervisor.exe" .
+.\MagicWeb-Hypervisor.exe
+```
+
+---
+
+## 🧪 Automated Testing
+
+Run the automated contract and mathematical validation suite:
+```bash
+npm test
+```
+
+Verifies:
+- 384-D L2 vector normalization and cosine similarity bounds
+- Sub-word chunking and multi-scale semantic projections
+- Dual-Plane file-based classification accuracy
+
+---
+
+## 🏛️ Repository Structure
+
+```
+magicweb-hypervisor/
+├── .github/
+│   └── workflows/
+│       ├── ci.yml                 # Automated quality gate & contract verification
+│       ├── deploy-pages.yml       # Automated GitHub Pages continuous deployment
+│       └── release.yml            # Multi-platform native executable builder
+├── src/
+│   ├── ai/
+│   │   └── embeddings.js          # 384-D L2-normalized semantic vector engine
+│   ├── core/
+│   │   ├── process_manager.js     # Web Worker process pool & port dispatcher
+│   │   └── process_worker.js      # Isolated in-browser microservice runner
+│   ├── gateway/
+│   │   └── sw.js                  # Transparent loopback Service Worker
+│   ├── planes/
+│   │   └── classifier.js          # Dual-Plane workload classifier (WASI vs Linux)
+│   └── storage/
+│       └── indexeddb.js           # Multi-GB datastore & vector persistence
+├── tests/
+│   └── runner.js                  # Automated test runner
+├── desktop/
+│   └── main.go                    # Native Go standalone desktop runtime
+├── index.html                     # Hypervisor dashboard & Portal Viewport
+├── serve.js                       # COOP/COEP isolation server
+├── package.json                   # Metadata & scripts
+└── LICENSE                        # MIT License
+```
+
+---
+
+## 📜 Community & License
+
+Maintained by the **VEFA Engineering Team** ([www.VEFA.club](https://www.vefa.club)).  
+Released under the [MIT License](LICENSE).

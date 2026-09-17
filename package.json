@@ -1,0 +1,32 @@
+﻿{
+  "name": "@vefa/magicweb-hypervisor",
+  "version": "3.2.0",
+  "description": "2026 Dual-Plane In-Browser WebAssembly Hypervisor, Polyglot Microservice Mesh & Grounded Vector Copilot",
+  "type": "module",
+  "main": "serve.js",
+  "scripts": {
+    "dev": "node serve.js",
+    "start": "node serve.js",
+    "test": "node tests/runner.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VEFAorg/magicweb-hypervisor.git"
+  },
+  "keywords": [
+    "webassembly",
+    "wasi",
+    "hypervisor",
+    "mesh",
+    "in-browser",
+    "microservices",
+    "service-worker",
+    "embeddings",
+    "indexeddb"
+  ],
+  "author": "VEFA Engineering Team (https://www.vefa.club)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
